@@ -6,9 +6,19 @@ type InputProps = {
   name: string;
   id: string;
   title: string;
+  value: string;
+  onChange: any;
 };
 
-const Input = ({ type, placeholder, name, id, title }: InputProps) => {
+const Input = ({
+  type,
+  placeholder,
+  name,
+  id,
+  title,
+  value,
+  onChange,
+}: InputProps) => {
   return (
     <div>
       <label
@@ -21,6 +31,8 @@ const Input = ({ type, placeholder, name, id, title }: InputProps) => {
         type={type}
         placeholder={placeholder}
         name={name}
+        value={value}
+        onChange={onChange}
         id={id}
         className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
       />
