@@ -24,7 +24,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
       icon: <TiClipboard />,
     },
   ];
-  const handleClick: any = () => setNav(!nav);
+  const handleClick = () => setNav(!nav);
   return (
     <div>
       <header className="bg-darkViolet sticky top-0 h-[72px] md:hidden flex justify-start items-center drop-shadow-xl z-[900]">
@@ -37,7 +37,7 @@ const Layout = ({ children }: { children: React.ReactNode }) => {
               <MdCancel className="w-10 text-2xl text-white" />
             )}
           </div>
-          <div className="md:hidden ml-72 w-full">
+          <div className="md:hidden ml-80 w-full">
             <Image
               src="/assets/images/logobluecion.png"
               alt=""
