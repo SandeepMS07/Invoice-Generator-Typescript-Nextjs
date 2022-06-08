@@ -356,7 +356,6 @@ const Invoice: NextPage = () => {
         <div className="col-span-3">
           <div className="flex flex-col items-center justify-center  md:w-[670px]  lg:w-auto min-h-[600px] border-2 m-4 bg-gray-300">
             <p>name: {JSON.stringify(values.name)}</p>
-            <p>{JSON.stringify(itemList)}</p>
           </div>
         </div>
       </div>
