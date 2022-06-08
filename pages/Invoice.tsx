@@ -1,25 +1,24 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import Image from "next/image";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import Input from "../components/Input";
 
 const Invoice: NextPage = () => {
-  // interface values {
-  //   name: string;
-  //   email: any;
-  //   phone: number;
-  //   student_id: string;
-  //   learncab_id: string;
-  //   address: string;
-  //   city: string;
-  //   state: string;
-  //   pincode: string;
-  //   country: string;
-  //   gst_number: string;
-  //   payment_id: string;
-  //   date: string;
-  // }
+  interface values {
+    name: string;
+    email: any;
+    phone: number;
+    student_id: string;
+    learncab_id: string;
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+    country: string;
+    gst_number: string;
+    payment_id: string;
+    date: string;
+  }
 
   let [values, setValues] = useState({
     name: "",
@@ -37,6 +36,15 @@ const Invoice: NextPage = () => {
     date: "",
   });
 
+  interface itemList {
+    description: string;
+    price: number;
+    amount_paid: number;
+    plan_code: string;
+    days: number;
+    discount: string;
+  }
+  [];
   let [itemList, setItemList] = useState([
     {
       description: "",
@@ -48,10 +56,27 @@ const Invoice: NextPage = () => {
     },
   ]);
 
-  const onChange = (e: any) => {
+  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
+    console.log(values);
+    console.log(itemList);
+  }
+
+  const handleChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+    // setItemList({ ...itemList, [e.target.name]: e.target.value });
   };
 
+  const handleItemChange = (
+    e: { target: { name: any; value: any } },
+    index: number
+  ) => {
+    const { name, value } = e.target;
+    // setItemList({ ...itemList, [name]: value });
+    const list = [...itemList];
+    list[index][name] = value; 
+    setItemList(list);
+  };
   const handleaddclick = () => {
     setItemList([
       ...itemList,
@@ -165,50 +190,7 @@ const Invoice: NextPage = () => {
       title: "Date",
     },
   ];
-  const itemInputs = [
-    {
-      type: "text",
-      placeholder: "Enter Description",
-      name: "description",
-      id: "description",
-      title: "Description",
-    },
-    {
-      type: "Number",
-      placeholder: "Enter Price",
-      name: "price",
-      id: "price",
-      title: "Price",
-    },
-    {
-      type: "Number",
-      placeholder: "Enter Amount Paid",
-      name: "amount_paid",
-      id: "amount_paid",
-      title: "Amount Paid",
-    },
-    {
-      type: "text",
-      placeholder: "Enter Plan Code",
-      name: "plan_code",
-      id: "plan_code",
-      title: "Plan Code",
-    },
-    {
-      type: "Number",
-      placeholder: "Enter Days",
-      name: "days",
-      id: "days",
-      title: "Days",
-    },
-    {
-      type: "text",
-      placeholder: "Enter Discount",
-      name: "discount",
-      id: "discount",
-      title: "Discount",
-    },
-  ];
+
   return (
     <div>
       <Head>
@@ -220,7 +202,10 @@ const Invoice: NextPage = () => {
       <div className="grid lg:grid-cols-8 md:grid-cols-4 divide-x m-1 border-[1px]">
         <div className="md:col-span-5">
           <div>
-            <form className="flex flex-col justify-center items-center border-2 md:border-2 m-9 mx-12 md:m-4 p-4">
+            <form
+              onSubmit={(e) => handleSubmit(e)}
+              className="flex flex-col justify-center items-center border-2 md:border-2 m-9 mx-12 md:m-4 p-4"
+            >
               <div className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 w-full">
                 {inputs.map((input) => (
                   <div className="md:mr-10" key={input.id}>
@@ -229,8 +214,7 @@ const Invoice: NextPage = () => {
                       name={input.name}
                       id={input.id}
                       title={input.title}
-                      value={values.email}
-                      onChange={onChange}
+                      onChange={handleChange}
                       placeholder={input.title}
                     />
                   </div>
@@ -251,19 +235,78 @@ const Invoice: NextPage = () => {
                       <div className="border-[1px] w-full mt-1 bg-gray-200  border-gray-200 inline-block mb-1 drop-shadow-xl"></div>
                       <div>
                         <div className="grid md:grid-cols-3">
-                          {itemInputs.map((input) => (
-                            <div className="md:mr-10" key={input.id}>
-                              <Input
-                                type={input.type}
-                                name={input.name}
-                                id={input.id}
-                                title={input.title}
-                                placeholder={input.placeholder}
-                                value={values.name}
-                                onChange={onChange}
-                              />
-                            </div>
-                          ))}
+                          <div className="md:mr-10">
+                            <Input
+                              type="text"
+                              name="description"
+                              id="description"
+                              title="Description"
+                              placeholder="Enter Description"
+                              onChange={(e: any) => {
+                                handleItemChange(e, i);
+                              }}
+                            />
+                          </div>
+                          <div className="md:mr-10">
+                            <Input
+                              type="Number"
+                              name="price"
+                              id="price"
+                              title="Price"
+                              placeholder="Enter Price"
+                              onChange={(e: any) => {
+                                handleItemChange(e, i);
+                              }}
+                            />
+                          </div>
+                          <div className="md:mr-10">
+                            <Input
+                              type="Number"
+                              name="amount_paid"
+                              id="amount_paid"
+                              title="Amount Paid"
+                              placeholder="Enter Amount Paid"
+                              onChange={(e: any) => {
+                                handleItemChange(e, i);
+                              }}
+                            />
+                          </div>
+                          <div className="md:mr-10">
+                            <Input
+                              type="Number"
+                              name="plan_code"
+                              id="plan_code"
+                              title="Plan Code"
+                              placeholder="Enter Plan Code"
+                              onChange={(e: any) => {
+                                handleItemChange(e, i);
+                              }}
+                            />
+                          </div>
+                          <div className="md:mr-10">
+                            <Input
+                              type="Number"
+                              name="days"
+                              id="days"
+                              title="Days"
+                              placeholder="Enter Days"
+                              onChange={(e: any) => {
+                                handleItemChange(e, i);
+                              }}
+                            />
+                          </div>
+                          <div className="md:mr-10">
+                            <Input
+                              type="Number"
+                              name="discount"
+                              id="discount"
+                              title="Discount"
+                              placeholder="Enter Discount"
+                              onChange={(e: any) => {
+                                handleItemChange(e, i);
+                              }}
+                            />
+                          </div>
                         </div>
                         <div className="flex justify-end items-center mr-6">
                           <div>
@@ -312,7 +355,8 @@ const Invoice: NextPage = () => {
         </div>
         <div className="col-span-3">
           <div className="flex flex-col items-center justify-center  md:w-[670px]  lg:w-auto min-h-[600px] border-2 m-4 bg-gray-300">
-            Invoice Review Here
+            <p>name: {JSON.stringify(values.name)}</p>
+            <p>{JSON.stringify(itemList)}</p>
           </div>
         </div>
       </div>
