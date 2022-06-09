@@ -1,7 +1,9 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { FormEvent, useState } from "react";
+import { useDispatch } from "react-redux";
 import Input from "../components/Input";
+import { update } from "../redux/userSlice";
 
 const Invoice: NextPage = () => {
   interface values {
@@ -57,19 +59,54 @@ const Invoice: NextPage = () => {
   ]);
 
   const [error, setError] = useState({});
-  const [itemListError, setItemListError] = useState({});
+  const [itemListError, setItemListError] = useState({
+    description: "",
+    price: "",
+    amount_paid: "",
+    plan_code: "",
+    days: "",
+    discount: "",
+  });
   const [isSubmit, setIsSubmit] = useState(false);
+
+  const dispatch = useDispatch();
 
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     console.log(values);
     console.log(itemList);
+    // dispatch(update)
   }
 
   const handleChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
     // setItemList({ ...itemList, [e.target.name]: e.target.value });
     setError(valid(values));
+    dispatch(
+      update({
+        // name: values.name,
+        // email: values.email,
+        // phone: values.phone,
+        // student_id: values.student_id,
+        // learncab_id: values.learncab_id,
+        // address: values.address,
+        // city: values.city,
+        // state: values.state,
+        // pincode: values.pincode,
+        // country: values.country,
+        // gst_number: values.gst_number,
+        // payment_id: values.payment_id,
+        // date: values.date,
+        // description: itemList.descrption,
+        // price: itemList.price,
+        // amount_paid: itemList.amount_paid,
+        // plan_code: itemList.plan_code,
+        // days: itemList.days,
+        // discount: itemList.discount,
+        values: values,
+        itemList: itemList,
+      })
+    );
   };
 
   const handleItemChange = (
