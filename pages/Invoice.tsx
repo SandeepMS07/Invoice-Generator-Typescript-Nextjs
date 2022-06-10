@@ -1,9 +1,10 @@
+import axios from "axios";
 import type { NextPage } from "next";
 import Head from "next/head";
 import { FormEvent, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import Input from "../components/Input";
-import { update } from "../redux/userSlice";
+import { reset, update } from "../redux/userSlice";
 
 const Invoice: NextPage = () => {
   interface values {
@@ -68,45 +69,88 @@ const Invoice: NextPage = () => {
     discount: "",
   });
   const [isSubmit, setIsSubmit] = useState(false);
+  let [pdf, setPdf] = useState();
 
   const dispatch = useDispatch();
+  const Name: string = useSelector((state: any) => state.detail.name);
+  const Email: string = useSelector((state: any) => state.detail.email);
+  const Phone: number = useSelector((state: any) => state.detail.phone);
+  const StudentId: string = useSelector(
+    (state: any) => state.detail.student_id
+  );
+  const LearncabId: string = useSelector(
+    (state: any) => state.detail.learncab_id
+  );
+  const Address: string = useSelector((state: any) => state.detail.address);
+  const City: string = useSelector((state: any) => state.detail.city);
+  const State: string = useSelector((state: any) => state.detail.state);
+  const Pincode: string = useSelector((state: any) => state.detail.pincode);
+  const Country: string = useSelector((state: any) => state.detail.country);
+  const GSTNo: string = useSelector((state: any) => state.detail.gst_number);
+  const PaymentId: string = useSelector(
+    (state: any) => state.detail.payment_id
+  );
+  const InvoiceDate: string = useSelector((state: any) => state.detail.date);
 
+  const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     console.log(values);
     console.log(itemList);
-    // dispatch(update)
+    dispatch(
+      update({
+        values: values,
+        itemList: itemList,
+      })
+    );
+
+    let details = {
+      name: Name,
+      email: Email,
+      phone: Phone,
+      student_id: StudentId,
+      learncab_id: LearncabId,
+      address: Address,
+      city: City,
+      state: State,
+      pincode: Pincode,
+      country: Country,
+      gst_number: GSTNo,
+      payment_id: PaymentId,
+      invoice_date: InvoiceDate,
+      items: itemsDetails,
+    };
+    console.log(details);
+    let apiUrl = "http://localhost:8000/invoy/api/v1/invoice/generateInvoice";
+    axios({
+      method: "post",
+      url: apiUrl,
+      data: details,
+      headers: { "Content-Type": "application/Json" },
+    })
+      .then((response) => {
+        //handle success
+        // console.log(response);
+        // console.log(response.data.fileurl);
+        let urldata = response.data.fileurl;
+
+        // Array.from(document.querySelectorAll("input")).forEach(
+        //   (input) => (input.value = "")
+        // );
+        // setValues([{}]);
+        // setItemList([{}]);
+        setPdf(urldata);
+      })
+      .catch((response) => {
+        //handle error
+        console.log(response);
+      });
   }
 
   const handleChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
     // setItemList({ ...itemList, [e.target.name]: e.target.value });
     setError(valid(values));
-    dispatch(
-      update({
-        // name: values.name,
-        // email: values.email,
-        // phone: values.phone,
-        // student_id: values.student_id,
-        // learncab_id: values.learncab_id,
-        // address: values.address,
-        // city: values.city,
-        // state: values.state,
-        // pincode: values.pincode,
-        // country: values.country,
-        // gst_number: values.gst_number,
-        // payment_id: values.payment_id,
-        // date: values.date,
-        // description: itemList.descrption,
-        // price: itemList.price,
-        // amount_paid: itemList.amount_paid,
-        // plan_code: itemList.plan_code,
-        // days: itemList.days,
-        // discount: itemList.discount,
-        values: values,
-        itemList: itemList,
-      })
-    );
   };
 
   const handleItemChange = (
@@ -234,7 +278,7 @@ const Invoice: NextPage = () => {
     },
   ];
 
-  interface NewType {
+  interface NewType1 {
     name: string;
     email: string;
     phone: string;
@@ -270,7 +314,7 @@ const Invoice: NextPage = () => {
   //   return errors;
   // }
 
-  let valid = (value: NewType) => {
+  let valid = (value: NewType1) => {
     let errors: any = {};
 
     let emailReg = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/g;
@@ -557,6 +601,16 @@ const Invoice: NextPage = () => {
                 <button
                   type="reset"
                   className="m-4 w-20 py-1 text-center text-white rounded bg-darkViolet hover:bg-blue-800 hover:text-white"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    dispatch(reset());
+
+                    Array.from(document.querySelectorAll("input")).forEach(
+                      (input) => (input.value = "")
+                    );
+                    setValues([{}]);
+                    setItemList([{}]);
+                  }}
                 >
                   Reset
                 </button>

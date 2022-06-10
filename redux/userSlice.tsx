@@ -3,55 +3,56 @@ import { createSlice } from "@reduxjs/toolkit";
 export const userSlice = createSlice({
   name: "detail",
   initialState: {
-    // name: null,
-    // email: null,
-    // phone: null,
-    // student_id: null,
-    // learncab_id: null,
-    // address: null,
-    // city: null,
-    // state: null,
-    // pincode: null,
-    // country: null,
-    // gst_number: null,
-    // payment_id: null,
-    // date: null,
-    // description: null,
-    // price: null,
-    // amount_paid: null,
-    // plan_code: null,
-    // days: null,
-    // discount: null,
-    values: null,
+    name: null,
+    email: null,
+    phone: null,
+    student_id: null,
+    learncab_id: null,
+    address: null,
+    city: null,
+    state: null,
+    pincode: null,
+    country: null,
+    gst_number: null,
+    payment_id: null,
+    date: null,
     itemList: null,
   },
   reducers: {
     update: (state, action) => {
-      // state.name = action.payload.name;
-      // state.email = action.payload.email;
-      // state.phone = action.payload.phone;
-      // state.student_id = action.payload.student_id;
-      // state.learncab_id = action.payload.learncab_id;
-      // state.address = action.payload.address;
-      // state.city = action.payload.city;
-      // state.state = action.payload.state;
-      // state.pincode = action.payload.pincode;
-      // state.country = action.payload.country;
-      // state.gst_number = action.payload.gst_number;
-      // state.payment_id = action.payload.payment_id;
-      // state.date = action.payload.date;
-      // state.description= action.payload.description;
-      // state.price= action.payload.price;
-      // state.amount_paid= action.payload.amount_paid;
-      // state.plan_code= action.payload.plan_code;
-      // state.days= action.payload.days;
-      // state.discount= action.payload.discount;
-      state.values = action.payload.values;
+      state.name = action.payload.values.name;
+      state.email = action.payload.values.email;
+      state.phone = action.payload.values.phone;
+      state.student_id = action.payload.values.student_id;
+      state.learncab_id = action.payload.values.learncab_id;
+      state.address = action.payload.values.address;
+      state.city = action.payload.values.city;
+      state.state = action.payload.values.state;
+      state.pincode = action.payload.values.pincode;
+      state.country = action.payload.values.country;
+      state.gst_number = action.payload.values.gst_number;
+      state.payment_id = action.payload.values.payment_id;
+      state.date = action.payload.values.date;
       state.itemList = action.payload.itemList;
-      
+    },
+    reset: (state) => {
+      state.name = null;
+      state.email = null;
+      state.phone = null;
+      state.student_id = null;
+      state.learncab_id = null;
+      state.address = null;
+      state.city = null;
+      state.state = null;
+      state.pincode = null;
+      state.country = null;
+      state.gst_number = null;
+      state.payment_id = null;
+      state.date = null;
+      state.itemList = null;
     },
   },
 });
 
-export const { update } = userSlice.actions;
+export const { update, reset } = userSlice.actions;
 export default userSlice.reducer;
