@@ -4,9 +4,11 @@ import Head from "next/head";
 import { FormEvent, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "../components/Input";
+import InvoiceReview from "../components/InvoiceReview";
 import { reset, update } from "../redux/userSlice";
 
-const Invoice: NextPage = () => {
+const Invoice: NextPage = ({ data }) => {
+  console.log(data);
   interface values {
     name: string;
     email: any;
@@ -93,6 +95,7 @@ const Invoice: NextPage = () => {
   const InvoiceDate: string = useSelector((state: any) => state.detail.date);
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
+
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     console.log(values);
@@ -190,7 +193,7 @@ const Invoice: NextPage = () => {
       placeholder: "Enter Name",
       name: "name",
       id: "name",
-      title: "Name",
+      title: "Name / Business Name",
     },
     {
       type: "email",
@@ -294,26 +297,6 @@ const Invoice: NextPage = () => {
     date: string;
   }
 
-  // function valid(values: {
-  //   name: string;
-  //   email: string;
-  //   phone: string;
-  //   student_id: string;
-  //   learncab_id: string;
-  //   address: string;
-  //   city: string;
-  //   state: string;
-  //   pincode: string;
-  //   country: string;
-  //   gst_number: string;
-  //   payment_id: string;
-  //   date: string;
-  // }): import("react").SetStateAction<{}> {
-  //   let errors = {};
-
-  //   return errors;
-  // }
-
   let valid = (value: NewType1) => {
     let errors: any = {};
 
@@ -373,20 +356,15 @@ const Invoice: NextPage = () => {
       errors.country = "*country required";
     }
 
-    //!   gst_number
-    if (!value.gst_number) {
-      errors.gst_number = "*gst_number required";
-    }
-
     //!  Payment id
     if (!value.payment_id) {
       errors.payment_id = "*Payment id required";
     }
 
-    //!  invoice_date
-    if (!value.date) {
-      errors.date = "*invoice datFe required";
-    }
+    // //!  invoice_date
+    // if (!value.date) {
+    //   errors.date = "*invoice datFe required";
+    // }
 
     return errors;
   };
@@ -463,13 +441,13 @@ const Invoice: NextPage = () => {
                       id={input.id}
                       title={input.title}
                       onChange={handleChange}
-                      placeholder={input.title}
+                      placeholder={input.placeholder}
                       error={error[input.name]}
                     />
                   </div>
                 ))}
               </div>
-              <div className=" border-[1px] w-full bg-gray-200 border-gray-200 inline-block mb-2 drop-shadow-xl"></div>
+              <div className="border-[1px] w-full bg-gray-200 border-gray-200 inline-block mb-2 drop-shadow-xl"></div>
               {/* Items */}
               <div className="flex flex-col w-full">
                 <label
@@ -594,6 +572,13 @@ const Invoice: NextPage = () => {
               <div className="flex flex-row">
                 <button
                   type="submit"
+                  // onClick={(e) => {
+                  //   Array.from(document.querySelectorAll("input")).forEach(
+                  //     (input) => (input.value = "")
+                  //   );
+                  //   setValues([{}]);
+                  //   setItemList([{}]);
+                  // }}
                   className="m-4 w-20 py-1 text-center text-white rounded  bg-darkViolet hover:bg-blue-800 hover:text-white"
                 >
                   Submit
@@ -620,7 +605,20 @@ const Invoice: NextPage = () => {
         </div>
         <div className="col-span-3">
           <div className="flex flex-col items-center justify-center  md:w-[670px]  lg:w-auto min-h-[600px] border-2 m-4 bg-gray-300">
-            <p>name: {JSON.stringify(values.name)}</p>
+            <object
+              data={pdf}
+              type="application/pdf"
+              // width="100%"
+              // height="100%"
+              className="w-[370px] h-[600px] md:w-[650px] md:h-[800px] lg:w-[510px] lg:h-[600px]"
+            >
+              <p>
+                Alternative text - include a link{" "}
+                <a className="text-darkViolet font-bold underline" href={pdf}>
+                  to the PDF!
+                </a>
+              </p>
+            </object>
           </div>
         </div>
       </div>
@@ -629,3 +627,20 @@ const Invoice: NextPage = () => {
 };
 
 export default Invoice;
+
+// export async function getServerSideProps() {
+//   let url =
+//     "https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096";
+//   const res = await axios({
+//     method: "GET",
+//     url: url,
+//     headers: {
+//       svalue: "23835e387fda4748b2aed408f9e90e8c",
+//     },
+//   });
+//   return {
+//     props: {
+//       data: res.data,
+//     },
+//   };
+// }
