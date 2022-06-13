@@ -1,14 +1,15 @@
 import axios from "axios";
 import type { NextPage } from "next";
 import Head from "next/head";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "../components/Input";
 import InvoiceReview from "../components/InvoiceReview";
 import { reset, update } from "../redux/userSlice";
 
-const Invoice: NextPage = ({ data }) => {
-  console.log(data);
+const Invoice: NextPage = ({ data }: any) => {
+  const phone_numberData: number = data.data[0].phone_number;
+  console.log(phone_numberData);
   interface values {
     name: string;
     email: any;
@@ -95,6 +96,23 @@ const Invoice: NextPage = ({ data }) => {
   const InvoiceDate: string = useSelector((state: any) => state.detail.date);
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
+
+  // useEffect(() => {
+  //   axios({
+  //     method: "GET",
+  //     url: "https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096",
+  //     headers: {
+  //       "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
+  //     },
+  //   })
+  //     .then((res) => {
+  //       console.log(res);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  //   // return () => {};
+  // }, []);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
@@ -433,7 +451,7 @@ const Invoice: NextPage = ({ data }) => {
               className="flex flex-col justify-center items-center border-2 md:border-2 m-9 mx-12 md:m-4 p-4"
             >
               <div className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 w-full">
-                {inputs.map((input) => (
+                {/* {inputs.map((input) => (
                   <div className="md:mr-10" key={input.id}>
                     <Input
                       type={input.type}
@@ -445,7 +463,150 @@ const Invoice: NextPage = ({ data }) => {
                       error={error[input.name]}
                     />
                   </div>
-                ))}
+                ))} */}
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="name"
+                    id="name"
+                    title="Name / Business Name"
+                    onChange={handleChange}
+                    placeholder="Enter Name"
+                    error={error.name}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="email"
+                    name="email"
+                    id="email"
+                    title="Email"
+                    onChange={handleChange}
+                    placeholder="Enter Email"
+                    error={error.email}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="Number"
+                    name="phone"
+                    id="phone"
+                    title="Phone No"
+                    onChange={handleChange}
+                    placeholder="Enter Phone No"
+                    error={error.phone}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="student_id"
+                    id="student_id"
+                    title="Student ID"
+                    onChange={handleChange}
+                    placeholder="Enter Student ID"
+                    error={error.student_id}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="learncab_id"
+                    id="learncab_id"
+                    title="Learncab ID"
+                    onChange={handleChange}
+                    placeholder="Enter Learncab ID"
+                    error={error.learncab_id}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="address"
+                    id="address"
+                    title="Address"
+                    onChange={handleChange}
+                    placeholder="Enter Address"
+                    error={error.address}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="city"
+                    id="city"
+                    title="City"
+                    onChange={handleChange}
+                    placeholder="Enter City"
+                    error={error.city}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="state"
+                    id="state"
+                    title="State"
+                    onChange={handleChange}
+                    placeholder="Enter State"
+                    error={error.state}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="pincode"
+                    id="pincode"
+                    title="Pincode"
+                    onChange={handleChange}
+                    placeholder="Enter Pincode"
+                    error={error.pincode}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="country"
+                    id="country"
+                    title="Country"
+                    onChange={handleChange}
+                    placeholder="Enter Country"
+                    error={error.country}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="gst_number"
+                    id="gst_number"
+                    title="GST Number"
+                    onChange={handleChange}
+                    placeholder="Enter GST Number"
+                    error={error.gst_number}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="text"
+                    name="payment_id"
+                    id="payment_id"
+                    title="Payment ID"
+                    onChange={handleChange}
+                    placeholder="Enter Payment ID"
+                    error={error.payment_id}
+                  />
+                </div>
+                <div className="md:mr-10">
+                  <Input
+                    type="Date"
+                    name="date"
+                    id="date"
+                    title="Date"
+                    onChange={handleChange}
+                    placeholder="Enter Date"
+                    error={error.date}
+                  />
+                </div>
               </div>
               <div className="border-[1px] w-full bg-gray-200 border-gray-200 inline-block mb-2 drop-shadow-xl"></div>
               {/* Items */}
@@ -628,19 +789,19 @@ const Invoice: NextPage = ({ data }) => {
 
 export default Invoice;
 
-// export async function getServerSideProps() {
-//   let url =
-//     "https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096";
-//   const res = await axios({
-//     method: "GET",
-//     url: url,
-//     headers: {
-//       svalue: "23835e387fda4748b2aed408f9e90e8c",
-//     },
-//   });
-//   return {
-//     props: {
-//       data: res.data,
-//     },
-//   };
-// }
+export async function getServerSideProps() {
+  let url =
+    "https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096";
+  const res = await axios({
+    method: "GET",
+    url: url,
+    headers: {
+      "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
+    },
+  });
+  return {
+    props: {
+      data: res.data,
+    },
+  };
+}
