@@ -791,7 +791,7 @@ export default Invoice;
 
 export async function getServerSideProps() {
   let url =
-    "https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096";
+     
   const res = await axios({
     method: "GET",
     url: url,
