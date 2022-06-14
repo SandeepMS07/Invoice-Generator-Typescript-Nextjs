@@ -4,10 +4,9 @@ import Head from "next/head";
 import { FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "../components/Input";
-import InvoiceReview from "../components/InvoiceReview";
 import { reset, update } from "../redux/userSlice";
 
-const Invoice: NextPage = () => {
+const Invoice: NextPage = ({ data, success }: any) => {
   // const phone_numberData: string = data.data[0].phone_number;
   // console.log(success);
   // console.log(phone_numberData);
@@ -42,24 +41,34 @@ const Invoice: NextPage = () => {
     payment_id: "",
     date: "",
   });
+
+  const [res, setRes] = useState({});
+
+  /**
+   * fetching student ID from API
+   */
   async function fetchData() {
     try {
       let url = `https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/${values.phone}`;
-      const res = await axios({
+      const res: any = await axios({
         method: "GET",
         url: url,
         headers: {
           "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
         },
       });
-      setValues({ ...values, student_id: res.data[0]._id });
-      console.log("its wokring")
+      console.log(res.data);
+      // console.log(res.data[0]._id);
+      setRes(res.data.data[0].phone_number);
+      setValues({ ...values, student_id: res.data.data[0]._id });
     } catch (err) {
       console.log(err);
     }
   }
   useEffect(() => {
-    if (values.phone.length == 10) fetchData();
+    if (values.phone.length == 10) {
+      fetchData();
+    }
   }, [values.phone]);
 
   interface itemList {
@@ -83,19 +92,19 @@ const Invoice: NextPage = () => {
   ]);
 
   const [error, setError] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    student_id: "",
-    learncab_id: "",
-    address: "",
-    city: "",
-    state: "",
-    pincode: "",
-    country: "",
-    gst_number: "",
-    payment_id: "",
-    date: "",
+    name: false,
+    email: false,
+    phone: false,
+    student_id: false,
+    learncab_id: false,
+    address: false,
+    city: false,
+    state: false,
+    pincode: false,
+    country: false,
+    gst_number: false,
+    payment_id: false,
+    date: false,
   });
   const [itemListError, setItemListError] = useState({
     description: "",
@@ -131,23 +140,6 @@ const Invoice: NextPage = () => {
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
 
-  // useEffect(() => {
-  //   axios({
-  //     method: "GET",
-  //     url: "https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096",
-  //     headers: {
-  //       "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
-  //     },
-  //   })
-  //     .then((res) => {
-  //       console.log(res);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  //   // return () => {};
-  // }, []);
-
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
     console.log(values);
@@ -177,6 +169,8 @@ const Invoice: NextPage = () => {
     };
     console.log(details);
     let apiUrl = "http://localhost:8000/invoy/api/v1/invoice/generateInvoice";
+    // {
+    //   error &&
     axios({
       method: "post",
       url: apiUrl,
@@ -200,26 +194,15 @@ const Invoice: NextPage = () => {
         //handle error
         console.log(response);
       });
+    // }
   }
 
-  // const handleChangePhoneNumber = (e: any) => {
-  //   setValues({ ...values, [values.phone]: e.target.value });
-
-  //   if (values.phone == phone_numberData) {
-  //     setValues({ ...values, [values.student_id]: data.data[0].student_id });
-  //   } else {
-  //     setError({
-  //       ...error,
-  //       [error.phone]: "can't find student id in this phone number",
-  //     });
-  //   }
-  // };
   const handleChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
 
     // setItemList({ ...itemList, [e.target.name]: e.target.value });
     setError(valid(values));
-    console.log(values);
+    // console.log(values);
   };
 
   const handleItemChange = (
@@ -253,100 +236,6 @@ const Invoice: NextPage = () => {
     setItemList(list);
   };
 
-  // const inputs = [
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter Name",
-  //     name: "name",
-  //     id: "name",
-  //     title: "Name / Business Name",
-  //   },
-  //   {
-  //     type: "email",
-  //     placeholder: "Enter Email",
-  //     name: "email",
-  //     id: "email",
-  //     title: "Email",
-  //   },
-  //   {
-  //     type: "Number",
-  //     placeholder: "Enter Phone No",
-  //     name: "phone",
-  //     id: "phone",
-  //     title: "Phone No",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter Student ID",
-  //     name: "student_id",
-  //     id: "student_id",
-  //     title: "Student ID",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter LearnCab ID",
-  //     name: "learncab_id",
-  //     id: "learncab_id",
-  //     title: "LearnCab ID",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter Address",
-  //     name: "address",
-  //     id: "address",
-  //     title: "Address",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter City",
-  //     name: "city",
-  //     id: "city",
-  //     title: "City",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter State",
-  //     name: "state",
-  //     id: "state",
-  //     title: "State",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter Pincode",
-  //     name: "pincode",
-  //     id: "pincode",
-  //     title: "Pincode",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter Country",
-  //     name: "country",
-  //     id: "country",
-  //     title: "Country",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter GST Number",
-  //     name: "gst_number",
-  //     id: "gst_number",
-  //     title: "GST Number",
-  //   },
-  //   {
-  //     type: "text",
-  //     placeholder: "Enter Payment ID",
-  //     name: "payment_id",
-  //     id: "payment_id",
-  //     title: "Payment ID",
-  //   },
-  //   {
-  //     type: "Date",
-  //     placeholder: "Enter Date",
-  //     name: "date",
-  //     id: "date",
-  //     title: "Date",
-  //   },
-  // ];
-
   interface NewType1 {
     name: string;
     email: string;
@@ -363,27 +252,6 @@ const Invoice: NextPage = () => {
     date: string;
   }
 
-  /**
-   * validation
-   */
-  // const [error, setErrors] = useState({
-  //   name: false,
-  //   phone: false,
-  // });
-
-  // const handleChange = (value) => {
-  //   switch (value) {
-  //     case "name":
-  //       if (values.name.length < 3) {
-  //         setErrors({ ...error, name: true });
-  //       } else {
-  //         setErrors({ ...error, name: false });
-  //         setValues({ ...values, name: value });
-  //       }
-  //   }
-  // };
-  // //
-
   let valid = (value: NewType1) => {
     let errors: any = {};
 
@@ -391,59 +259,81 @@ const Invoice: NextPage = () => {
     let mobileReg =
       /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/g;
 
+    // switch (value) {
+    //   case "name":
+    //     if (!value.name) {
+    //       errors.name = "*Name required";
+    //     }
+    //     break;
+
+    //   default:
+    //     break;
+    // }
     //!  name
     if (!value.name) {
+      setError({ ...error, name: true });
       errors.name = "*Name required";
     }
     //!  email
     if (!value.email) {
+      setError({ ...error, email: true });
       errors.email = "*Email required";
     } else if (!emailReg.test(value.email)) {
+      setError({ ...error, email: true });
       errors.email = "*email should be in the format ex.axxx@gmaxx.com";
     }
 
     //!  Phone number
     if (!value.phone) {
+      setError({ ...error, phone: true });
       errors.phone = "*phonenumber required";
     }
 
     //!  Student id
     if (!value.student_id) {
+      setError({ ...error, student_id: true });
       errors.student_id = "*Student id required";
     }
 
     //!  Learncab id
     if (!value.learncab_id) {
+      setError({ ...error, learncab_id: true });
       errors.learncab_id = "*Learncab id required";
     }
 
     //!   Address
     if (!value.address) {
+      setError({ ...error, address: true });
       errors.address = "*address required";
     }
 
     //!   city
     if (!value.city) {
+      setError({ ...error, city: true });
       errors.city = "*city required";
     }
 
     //!   state
     if (!value.state) {
+      setError({ ...error, state: true });
       errors.state = "*state required";
     }
 
     //!   pincode
     if (!value.pincode) {
+      setError({ ...error, pincode: true });
       errors.pincode = "*pincode required";
     }
 
     //!   country
     if (!value.country) {
+      setError({ ...error, country: true });
       errors.country = "*country required";
     }
 
     //!  Payment id
     if (!value.payment_id) {
+      setError({ ...error, payment_id: true });
       errors.payment_id = "*Payment id required";
     }
 
@@ -578,19 +468,17 @@ const Invoice: NextPage = () => {
                   </label>
 
                   {/*  */}
-                  {/* {values.phone == phone_numberData ? ( */}
+                  {values.phone == res ? (
                     <input
                       type="text"
                       placeholder="Enter Student ID"
                       name="student_id"
-                      // defaultValue={data.data[0]._id}
+                      defaultValue={values.student_id}
                       readOnly
-                      onChange={handleChange}
                       id="student_id"
                       className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
                     />
-                  {/* ) : ( */}
-                    {/* // {setValues({...values, [values.student_id]:data.data[0].student_id})}
+                  ) : (
                     <div>
                       <input
                         type="text"
@@ -605,7 +493,7 @@ const Invoice: NextPage = () => {
                         {error.student_id}
                       </p>
                     </div>
-                  )} */}
+                  )}
                 </div>
                 <div className="md:mr-10">
                   <Input
@@ -858,6 +746,7 @@ const Invoice: NextPage = () => {
                 >
                   Submit
                 </button>
+
                 <button
                   type="reset"
                   className="m-4 w-20 py-1 text-center text-white rounded bg-darkViolet hover:bg-blue-800 hover:text-white"
@@ -903,4 +792,20 @@ const Invoice: NextPage = () => {
 
 export default Invoice;
 
- 
+// export async function getServerSideProps() {
+//   console.log("came here");
+//   let url = `https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096`;
+//   const res = await axios({
+//     method: "GET",
+//     url: url,
+//     headers: {
+//       "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
+//     },
+//   });
+//   return {
+//     props: {
+//       data: res.data,
+//       success: true,
+//     },
+//   };
+// }
