@@ -6,7 +6,7 @@ type InputProps = {
   name: string;
   id: string;
   title: string;
-  // value: string;
+  value: string;
   onChange: any;
   error?: any;
 };
@@ -17,7 +17,7 @@ const Input = ({
   name,
   id,
   title,
-  // value,
+  value,
   onChange,
   error,
 }: InputProps) => {
@@ -33,7 +33,7 @@ const Input = ({
         type={type}
         placeholder={placeholder}
         name={name}
-        // value={value}
+        value={value}
         onChange={onChange}
         id={id}
         className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
