@@ -903,20 +903,4 @@ const Invoice: NextPage = () => {
 
 export default Invoice;
 
-// export async function getServerSideProps() {
-//   console.log("came here");
-//   let url = `https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096`;
-//   const res = await axios({
-//     method: "GET",
-//     url: url,
-//     headers: {
-//       "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
-//     },
-//   });
-//   return {
-//     props: {
-//       data: res.data,
-//       success: true,
-//     },
-//   };
-// }
+ 
