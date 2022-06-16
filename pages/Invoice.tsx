@@ -5,11 +5,16 @@ import { FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "../components/Input";
 import { reset, update } from "../redux/userSlice";
+import { SubmitHandler, useForm } from "react-hook-form";
 
-const Invoice: NextPage = ({ data, success }: any) => {
-  // const phone_numberData: string = data.data[0].phone_number;
-  // console.log(success);
-  // console.log(phone_numberData);
+const Invoice: NextPage = () => {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
+
   interface values {
     name: string;
     email: any;
@@ -140,10 +145,14 @@ const Invoice: NextPage = ({ data, success }: any) => {
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
-    e.preventDefault();
-    console.log(values);
-    console.log(itemList);
+  /**
+   *handleSubmit
+   *
+   */
+  const onSubmit: SubmitHandler<values> = ( ): void => {
+    // e.preventDefault();
+    // console.log(values);
+    // console.log(itemList);
     dispatch(
       update({
         values: values,
@@ -195,14 +204,10 @@ const Invoice: NextPage = ({ data, success }: any) => {
         console.log(response);
       });
     // }
-  }
+  };
 
   const handleChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
-
-    // setItemList({ ...itemList, [e.target.name]: e.target.value });
-    setError(valid(values));
-    // console.log(values);
   };
 
   const handleItemChange = (
@@ -214,7 +219,6 @@ const Invoice: NextPage = ({ data, success }: any) => {
     const list = [...itemList];
     list[index][name] = value;
     setItemList(list);
-    setItemListError(validation(itemList));
   };
   const handleaddclick = () => {
     setItemList([
@@ -252,99 +256,6 @@ const Invoice: NextPage = ({ data, success }: any) => {
     date: string;
   }
 
-  let valid = (value: NewType1) => {
-    let errors: any = {};
-
-    let emailReg = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/g;
-    let mobileReg =
-      /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/g;
-
-    // switch (value) {
-    //   case "name":
-    //     if (!value.name) {
-    //       errors.name = "*Name required";
-    //     }
-    //     break;
-
-    //   default:
-    //     break;
-    // }
-    //!  name
-    if (!value.name) {
-      setError({ ...error, name: true });
-      errors.name = "*Name required";
-    }
-    //!  email
-    if (!value.email) {
-      setError({ ...error, email: true });
-      errors.email = "*Email required";
-    } else if (!emailReg.test(value.email)) {
-      setError({ ...error, email: true });
-      errors.email = "*email should be in the format ex.axxx@gmaxx.com";
-    }
-
-    //!  Phone number
-    if (!value.phone) {
-      setError({ ...error, phone: true });
-      errors.phone = "*phonenumber required";
-    }
-
-    //!  Student id
-    if (!value.student_id) {
-      setError({ ...error, student_id: true });
-      errors.student_id = "*Student id required";
-    }
-
-    //!  Learncab id
-    if (!value.learncab_id) {
-      setError({ ...error, learncab_id: true });
-      errors.learncab_id = "*Learncab id required";
-    }
-
-    //!   Address
-    if (!value.address) {
-      setError({ ...error, address: true });
-      errors.address = "*address required";
-    }
-
-    //!   city
-    if (!value.city) {
-      setError({ ...error, city: true });
-      errors.city = "*city required";
-    }
-
-    //!   state
-    if (!value.state) {
-      setError({ ...error, state: true });
-      errors.state = "*state required";
-    }
-
-    //!   pincode
-    if (!value.pincode) {
-      setError({ ...error, pincode: true });
-      errors.pincode = "*pincode required";
-    }
-
-    //!   country
-    if (!value.country) {
-      setError({ ...error, country: true });
-      errors.country = "*country required";
-    }
-
-    //!  Payment id
-    if (!value.payment_id) {
-      setError({ ...error, payment_id: true });
-      errors.payment_id = "*Payment id required";
-    }
-
-    // //!  invoice_date
-    // if (!value.date) {
-    //   errors.date = "*invoice date required";
-    // }
-
-    return errors;
-  };
-
   interface NewType {
     description: string;
     price: string;
@@ -353,45 +264,6 @@ const Invoice: NextPage = ({ data, success }: any) => {
     days: string;
     discount: string;
   }
-
-  /**
-   * itemList
-   */
-  let validation = (itemList: NewType): import("react").SetStateAction<{}> => {
-    let errors: any = {};
-
-    //! description
-    if (!itemList.description) {
-      errors.description = "*description required";
-    }
-
-    //! price
-    if (!itemList.price) {
-      errors.price = "*price required";
-    }
-
-    //! amount_paid
-    if (!itemList.amount_paid) {
-      errors.amount_paid = "*amount paid required";
-    }
-
-    //! plan_code
-    if (!itemList.plan_code) {
-      errors.plan_code = "*plan code required";
-    }
-
-    //! days
-    if (!itemList.days) {
-      errors.days = "*days required";
-    }
-
-    //! discount
-    if (!itemList.discount) {
-      errors.discount = "*discount required";
-    }
-
-    return errors;
-  };
 
   return (
     <div>
@@ -405,7 +277,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
         <div className="md:col-span-5">
           <div>
             <form
-              onSubmit={(e) => handleSubmit(e)}
+              onSubmit={handleSubmit(onSubmit)}
               className="flex flex-col justify-center items-center border-2 md:border-2 m-9 mx-12 md:m-4 p-4"
             >
               <div className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 w-full">
@@ -425,13 +297,14 @@ const Invoice: NextPage = ({ data, success }: any) => {
                 <div className="md:mr-10">
                   <Input
                     type="text"
-                    name="name"
+                    // name="name"
                     id="name"
                     title="Name / Business Name"
-                    value={values.name}
-                    onChange={handleChange}
+                    value={values.name || ""}
+                    // onChange={handleChange}
                     placeholder="Enter Name"
                     error={error.name}
+                    {...register("name")}
                   />
                 </div>
                 <div className="md:mr-10">
@@ -440,7 +313,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="email"
                     id="email"
                     title="Email"
-                    value={values.email}
+                    value={values.email || ""}
                     onChange={handleChange}
                     placeholder="Enter Email"
                     error={error.email}
@@ -452,7 +325,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="phone"
                     id="phone"
                     title="Phone No"
-                    value={values.phone}
+                    value={values.phone || ""}
                     // onChange={handleChangePhoneNumber}
                     onChange={handleChange}
                     placeholder="Enter Phone No"
@@ -484,7 +357,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                         type="text"
                         placeholder="Enter Student ID"
                         name="student_id"
-                        value={values.student_id}
+                        value={values.student_id || ""}
                         onChange={handleChange}
                         id="student_id"
                         className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
@@ -501,7 +374,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="learncab_id"
                     id="learncab_id"
                     title="Learncab ID"
-                    value={values.learncab_id}
+                    value={values.learncab_id || ""}
                     onChange={handleChange}
                     placeholder="Enter Learncab ID"
                     error={error.learncab_id}
@@ -513,7 +386,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="address"
                     id="address"
                     title="Address"
-                    value={values.address}
+                    value={values.address || ""}
                     onChange={handleChange}
                     placeholder="Enter Address"
                     error={error.address}
@@ -525,7 +398,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="city"
                     id="city"
                     title="City"
-                    value={values.city}
+                    value={values.city || ""}
                     onChange={handleChange}
                     placeholder="Enter City"
                     error={error.city}
@@ -537,7 +410,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="state"
                     id="state"
                     title="State"
-                    value={values.state}
+                    value={values.state || ""}
                     onChange={handleChange}
                     placeholder="Enter State"
                     error={error.state}
@@ -549,7 +422,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="pincode"
                     id="pincode"
                     title="Pincode"
-                    value={values.pincode}
+                    value={values.pincode || ""}
                     onChange={handleChange}
                     placeholder="Enter Pincode"
                     error={error.pincode}
@@ -561,7 +434,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="country"
                     id="country"
                     title="Country"
-                    value={values.country}
+                    value={values.country || ""}
                     onChange={handleChange}
                     placeholder="Enter Country"
                     error={error.country}
@@ -573,7 +446,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="gst_number"
                     id="gst_number"
                     title="GST Number"
-                    value={values.gst_number}
+                    value={values.gst_number || ""}
                     onChange={handleChange}
                     placeholder="Enter GST Number"
                     error={error.gst_number}
@@ -585,7 +458,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="payment_id"
                     id="payment_id"
                     title="Payment ID"
-                    value={values.payment_id}
+                    value={values.payment_id || ""}
                     onChange={handleChange}
                     placeholder="Enter Payment ID"
                     error={error.payment_id}
@@ -597,7 +470,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="date"
                     id="date"
                     title="Date"
-                    value={values.date}
+                    value={values.date || ""}
                     onChange={handleChange}
                     placeholder="Enter Date"
                     error={error.date}
@@ -626,7 +499,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="description"
                               title="Description"
                               placeholder="Enter Description"
-                              value={itemList[0].description}
+                              value={itemList[0].description || ""}
                               onChange={(e: any) => {
                                 handleItemChange(e, i);
                               }}
@@ -643,7 +516,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               onChange={(e: any) => {
                                 handleItemChange(e, i);
                               }}
-                              value={itemList[0].price}
+                              value={itemList[0].price || ""}
                               error={itemListError.price}
                             />
                           </div>
@@ -654,7 +527,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="amount_paid"
                               title="Amount Paid"
                               placeholder="Enter Amount Paid"
-                              value={itemList[0].amount_paid}
+                              value={itemList[0].amount_paid || ""}
                               onChange={(e: any) => {
                                 handleItemChange(e, i);
                               }}
@@ -668,7 +541,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="plan_code"
                               title="Plan Code"
                               placeholder="Enter Plan Code"
-                              value={itemList[0].plan_code}
+                              value={itemList[0].plan_code || ""}
                               onChange={(e: any) => {
                                 handleItemChange(e, i);
                               }}
@@ -682,7 +555,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="days"
                               title="Days"
                               placeholder="Enter Days"
-                              value={itemList[0].days}
+                              value={itemList[0].days || ""}
                               onChange={(e: any) => {
                                 handleItemChange(e, i);
                               }}
@@ -696,7 +569,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="discount"
                               title="Discount"
                               placeholder="Enter Discount"
-                              value={itemList[0].discount}
+                              value={itemList[0].discount || ""}
                               onChange={(e: any) => {
                                 handleItemChange(e, i);
                               }}
@@ -791,21 +664,3 @@ const Invoice: NextPage = ({ data, success }: any) => {
 };
 
 export default Invoice;
-
-// export async function getServerSideProps() {
-//   console.log("came here");
-//   let url = `https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096`;
-//   const res = await axios({
-//     method: "GET",
-//     url: url,
-//     headers: {
-//       "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
-//     },
-//   });
-//   return {
-//     props: {
-//       data: res.data,
-//       success: true,
-//     },
-//   };
-// }
