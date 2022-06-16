@@ -5,16 +5,11 @@ import { FormEvent, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Input from "../components/Input";
 import { reset, update } from "../redux/userSlice";
-import { SubmitHandler, useForm } from "react-hook-form";
 
-const Invoice: NextPage = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-
+const Invoice: NextPage = ({ data, success }: any) => {
+  // const phone_numberData: string = data.data[0].phone_number;
+  // console.log(success);
+  // console.log(phone_numberData);
   interface values {
     name: string;
     email: any;
@@ -145,14 +140,10 @@ const Invoice: NextPage = () => {
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
 
-  /**
-   *handleSubmit
-   *
-   */
-  const onSubmit: SubmitHandler<values> = ( ): void => {
-    // e.preventDefault();
-    // console.log(values);
-    // console.log(itemList);
+  function handleSubmit(e: FormEvent<HTMLFormElement>): void {
+    e.preventDefault();
+    console.log(values);
+    console.log(itemList);
     dispatch(
       update({
         values: values,
@@ -204,10 +195,14 @@ const Invoice: NextPage = () => {
         console.log(response);
       });
     // }
-  };
+  }
 
   const handleChange = (e: any) => {
     setValues({ ...values, [e.target.name]: e.target.value });
+
+    // setItemList({ ...itemList, [e.target.name]: e.target.value });
+    setError(valid(values));
+    // console.log(values);
   };
 
   const handleItemChange = (
@@ -219,6 +214,7 @@ const Invoice: NextPage = () => {
     const list = [...itemList];
     list[index][name] = value;
     setItemList(list);
+    setItemListError(validation(itemList));
   };
   const handleaddclick = () => {
     setItemList([
@@ -256,6 +252,99 @@ const Invoice: NextPage = () => {
     date: string;
   }
 
+  let valid = (value: NewType1) => {
+    let errors: any = {};
+
+    let emailReg = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/g;
+    let mobileReg =
+      /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/g;
+
+    // switch (value) {
+    //   case "name":
+    //     if (!value.name) {
+    //       errors.name = "*Name required";
+    //     }
+    //     break;
+
+    //   default:
+    //     break;
+    // }
+    //!  name
+    if (!value.name) {
+      setError({ ...error, name: true });
+      errors.name = "*Name required";
+    }
+    //!  email
+    if (!value.email) {
+      setError({ ...error, email: true });
+      errors.email = "*Email required";
+    } else if (!emailReg.test(value.email)) {
+      setError({ ...error, email: true });
+      errors.email = "*email should be in the format ex.axxx@gmaxx.com";
+    }
+
+    //!  Phone number
+    if (!value.phone) {
+      setError({ ...error, phone: true });
+      errors.phone = "*phonenumber required";
+    }
+
+    //!  Student id
+    if (!value.student_id) {
+      setError({ ...error, student_id: true });
+      errors.student_id = "*Student id required";
+    }
+
+    //!  Learncab id
+    if (!value.learncab_id) {
+      setError({ ...error, learncab_id: true });
+      errors.learncab_id = "*Learncab id required";
+    }
+
+    //!   Address
+    if (!value.address) {
+      setError({ ...error, address: true });
+      errors.address = "*address required";
+    }
+
+    //!   city
+    if (!value.city) {
+      setError({ ...error, city: true });
+      errors.city = "*city required";
+    }
+
+    //!   state
+    if (!value.state) {
+      setError({ ...error, state: true });
+      errors.state = "*state required";
+    }
+
+    //!   pincode
+    if (!value.pincode) {
+      setError({ ...error, pincode: true });
+      errors.pincode = "*pincode required";
+    }
+
+    //!   country
+    if (!value.country) {
+      setError({ ...error, country: true });
+      errors.country = "*country required";
+    }
+
+    //!  Payment id
+    if (!value.payment_id) {
+      setError({ ...error, payment_id: true });
+      errors.payment_id = "*Payment id required";
+    }
+
+    // //!  invoice_date
+    // if (!value.date) {
+    //   errors.date = "*invoice date required";
+    // }
+
+    return errors;
+  };
+
   interface NewType {
     description: string;
     price: string;
@@ -264,6 +353,45 @@ const Invoice: NextPage = () => {
     days: string;
     discount: string;
   }
+
+  /**
+   * itemList
+   */
+  let validation = (itemList: NewType): import("react").SetStateAction<{}> => {
+    let errors: any = {};
+
+    //! description
+    if (!itemList.description) {
+      errors.description = "*description required";
+    }
+
+    //! price
+    if (!itemList.price) {
+      errors.price = "*price required";
+    }
+
+    //! amount_paid
+    if (!itemList.amount_paid) {
+      errors.amount_paid = "*amount paid required";
+    }
+
+    //! plan_code
+    if (!itemList.plan_code) {
+      errors.plan_code = "*plan code required";
+    }
+
+    //! days
+    if (!itemList.days) {
+      errors.days = "*days required";
+    }
+
+    //! discount
+    if (!itemList.discount) {
+      errors.discount = "*discount required";
+    }
+
+    return errors;
+  };
 
   return (
     <div>
@@ -277,7 +405,7 @@ const Invoice: NextPage = () => {
         <div className="md:col-span-5">
           <div>
             <form
-              onSubmit={handleSubmit(onSubmit)}
+              onSubmit={(e) => handleSubmit(e)}
               className="flex flex-col justify-center items-center border-2 md:border-2 m-9 mx-12 md:m-4 p-4"
             >
               <div className="grid md:grid-cols-2 lg:grid-cols-3 grid-cols-1 w-full">
@@ -297,14 +425,13 @@ const Invoice: NextPage = () => {
                 <div className="md:mr-10">
                   <Input
                     type="text"
-                    // name="name"
+                    name="name"
                     id="name"
                     title="Name / Business Name"
                     value={values.name || ""}
-                    // onChange={handleChange}
+                    onChange={handleChange}
                     placeholder="Enter Name"
                     error={error.name}
-                    {...register("name")}
                   />
                 </div>
                 <div className="md:mr-10">
@@ -664,3 +791,21 @@ const Invoice: NextPage = () => {
 };
 
 export default Invoice;
+
+// export async function getServerSideProps() {
+//   console.log("came here");
+//   let url = `https://nl-ns-apim-ds.azure-api.net/dev-darwin-lc/v1/customerSupport/getAddExtentiondata/9916965096`;
+//   const res = await axios({
+//     method: "GET",
+//     url: url,
+//     headers: {
+//       "Ocp-Apim-Subscription-Key": "23835e387fda4748b2aed408f9e90e8c",
+//     },
+//   });
+//   return {
+//     props: {
+//       data: res.data,
+//       success: true,
+//     },
+//   };
+// }
