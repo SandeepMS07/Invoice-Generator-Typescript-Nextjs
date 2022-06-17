@@ -879,7 +879,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                   //   setValues([{}]);
                   //   setItemList([{}]);
                   // }}
-                  className="m-4 w-20 py-1 text-center text-white rounded  bg-darkViolet hover:bg-blue-800 hover:text-white"
+                  className="m-4 w-20 py-1 text-center text-white rounded  bg-darkViolet "
                 >
                   Submit
                 </button>
