@@ -196,10 +196,25 @@ const Invoice: NextPage = ({ data, success }: any) => {
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
 
+  let errorIncludes = [];
+
+  for (let key in error) {
+    let obj = error[key];
+    for (let prop in obj) {
+      if (prop === "error") {
+        errorIncludes.push(obj[prop]);
+      }
+    }
+  }
+
+  const isActive= errorIncludes.some((item) => item === true)
+
+
+  
+
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
-    console.log(values);
-    console.log(itemList);
+
     dispatch(
       update({
         values: values,
@@ -223,7 +238,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
       invoice_date: InvoiceDate,
       items: itemsDetails,
     };
-    console.log(details);
+
     let apiUrl = "http://localhost:8000/invoy/api/v1/invoice/generateInvoice";
 
     axios({
@@ -269,8 +284,8 @@ const Invoice: NextPage = ({ data, success }: any) => {
     setValues({ ...values, [inputValue.target.name]: inputValue.target.value });
 
     const { value } = inputValue.target;
-    let emailReg = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/g;
-
+    // let emailReg = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/g;
+    let emailRegex = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
     switch (name) {
       case "name":
         if (value.length < 3) {
@@ -285,15 +300,21 @@ const Invoice: NextPage = ({ data, success }: any) => {
         break;
 
       case "email":
-        if (value.length < 10) {
-          handleSetErrors("email", true, "*please Enter Email Id");
-        } else if (emailReg.test(value.email) != value.email) {
+        if (value.length < 6) {
           handleSetErrors(
             "email",
             true,
-            "*email should be in the format ex.axxx@gmaxx.com"
+            "*email should be in the format axxxxx@gmail.com"
           );
-        } else {
+        }
+        // else if (!emailRegex.test(value.email)) {
+        //   handleSetErrors(
+        //     "email",
+        //     true,
+        //     "*email should be in the format ex.axxx@gmaxx.com"
+        //   );
+        // }
+        else {
           handleSetErrors("email", false, "");
         }
         break;
@@ -849,6 +870,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
               <div className="border-[1px] w-full mt-4 bg-gray-200  border-gray-200 inline-block mb-1 drop-shadow-xl"></div>
               <div className="flex flex-row">
                 <button
+                disabled={!isActive}
                   type="submit"
                   // onClick={(e) => {
                   //   Array.from(document.querySelectorAll("input")).forEach(
@@ -889,7 +911,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
               type="application/pdf"
               className="w-[370px] h-[600px] md:w-[650px] md:h-[800px] lg:w-[510px] lg:h-[600px]"
             >
-              <p>
+              <p className="text-center">
                 Alternative text - include a link{" "}
                 <a className="text-darkViolet font-bold underline" href={pdf}>
                   to the PDF!
