@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import axios from "axios";
 import type { NextPage } from "next";
 import Head from "next/head";
@@ -43,6 +44,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
   });
 
   const [phoneRes, setPhoneRes] = useState({});
+  const [active, setActive] = useState();
   /**
    * fetching student ID from API
    */
@@ -59,7 +61,11 @@ const Invoice: NextPage = ({ data, success }: any) => {
       // console.log(res.data);
       // console.log(res.data[0]._id);
       setPhoneRes(res.data.data[0].phone_number);
-      setValues({ ...values, student_id: res.data.data[0]._id });
+      setValues({
+        ...values,
+        student_id: res.data.data[0]._id,
+        learncab_id: res.data.data[0].student_id,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -196,7 +202,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
 
-  let errorIncludes = [];
+  let errorIncludes: any = [];
 
   for (let key in error) {
     let obj = error[key];
@@ -206,8 +212,22 @@ const Invoice: NextPage = ({ data, success }: any) => {
       }
     }
   }
-
-  const isActive = errorIncludes.some((item) => item === true);
+  for (let key in itemListError) {
+    let obj = itemListError[key];
+    for (let prop in obj) {
+      if (prop === "error") {
+        errorIncludes.push(obj[prop]);
+      }
+    }
+  }
+  useEffect(() => {
+    return () => {
+      const isActive = errorIncludes.some((item: boolean) => item === true);
+      console.log(isActive);
+      setActive(isActive);
+      // console.log(!isActive);
+    };
+  }, [errorIncludes]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
@@ -328,21 +348,21 @@ const Invoice: NextPage = ({ data, success }: any) => {
         }
         break;
 
-      case "student_id":
-        if (value.length < 3) {
-          handleSetErrors("student_id", true, "*please Enter Student id");
-        } else {
-          handleSetErrors("student_id", false, "");
-        }
-        break;
+      // case "student_id":
+      //   if (value.length < 3) {
+      //     handleSetErrors("student_id", true, "*please Enter Student id");
+      //   } else {
+      //     handleSetErrors("student_id", false, "");
+      //   }
+      //   break;
 
-      case "learncab_id":
-        if (value.length < 3) {
-          handleSetErrors("learncab_id", true, "*please Enter Learncab id");
-        } else {
-          handleSetErrors("learncab_id", false, "");
-        }
-        break;
+      // case "learncab_id":
+      //   if (value.length < 3) {
+      //     handleSetErrors("learncab_id", true, "*please Enter Learncab id");
+      //   } else {
+      //     handleSetErrors("learncab_id", false, "");
+      //   }
+      //   break;
 
       case "address":
         if (value.length < 3) {
@@ -622,20 +642,48 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     </div>
                   )}
                 </div>
+
                 <div className="md:mr-10">
-                  <Input
-                    type="text"
-                    name="learncab_id"
-                    id="learncab_id"
-                    title="Learncab ID"
-                    value={values.learncab_id || ""}
-                    onChange={(value: any) =>
-                      handleChange(value, "learncab_id")
-                    }
-                    placeholder="Enter Learncab ID"
-                    error={error.learncab_id}
-                  />
+                  <label
+                    htmlFor="student_id"
+                    className="block text-gray-700 text-xs font-bold mb-1"
+                  >
+                    Learncab ID
+                  </label>
+
+                  {/*  */}
+                  {values.phone == phoneRes ? (
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Enter Student ID"
+                        name="learncab_id"
+                        defaultValue={values.learncab_id}
+                        readOnly
+                        id="learncab_id"
+                        className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
+                      />
+                    </div>
+                  ) : (
+                    <div>
+                      <input
+                        type="text"
+                        placeholder="Enter Student ID"
+                        name="learncab_id"
+                        value={values.learncab_id || ""}
+                        onChange={(value: any) =>
+                          handleChange(value, "learncab_id")
+                        }
+                        id="learncab_id"
+                        className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
+                      />
+                      <p className="text-red-600 text-xs mb-2">
+                        {error.learncab_id.message}
+                      </p>
+                    </div>
+                  )}
                 </div>
+
                 <div className="md:mr-10">
                   <Input
                     type="text"
@@ -867,7 +915,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
               <div className="border-[1px] w-full mt-4 bg-gray-200  border-gray-200 inline-block mb-1 drop-shadow-xl"></div>
               <div className="flex flex-row">
                 <button
-                  disabled={!isActive}
+                  disabled={!active}
                   type="submit"
                   // onClick={(e) => {
                   //   Array.from(document.querySelectorAll("input")).forEach(
@@ -876,7 +924,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                   //   setValues([{}]);
                   //   setItemList([{}]);
                   // }}
-                  className="m-4 w-20 py-1 text-center text-white rounded  bg-darkViolet  "
+                  className="m-4 w-20 py-1 text-center text-white rounded  bg-darkViolet  disabled:opacity-40 disabled:bg-red-600  hover:bg-blue-800 hover:text-white"
                 >
                   Submit
                 </button>
