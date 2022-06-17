@@ -202,6 +202,9 @@ const Invoice: NextPage = ({ data, success }: any) => {
 
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
 
+  /**
+   *  
+   * */ 
   let errorIncludes: any = [];
 
   for (let key in error) {
@@ -212,8 +215,9 @@ const Invoice: NextPage = ({ data, success }: any) => {
       }
     }
   }
+
   for (let key in itemListError) {
-    let obj = itemListError[key];
+    let obj: any = itemListError[key];
     for (let prop in obj) {
       if (prop === "error") {
         errorIncludes.push(obj[prop]);
@@ -297,12 +301,14 @@ const Invoice: NextPage = ({ data, success }: any) => {
     });
   };
 
+
+
   const handleChange = (inputValue: any, name: string) => {
     setValues({ ...values, [inputValue.target.name]: inputValue.target.value });
 
     const { value } = inputValue.target;
     // let emailReg = /^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$/g;
-    let emailRegex = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
+    // let emailRegex = /[a-zA-Z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,8}(.[a-z{2,8}])?/g;
     switch (name) {
       case "name":
         if (value.length < 3) {
@@ -434,17 +440,20 @@ const Invoice: NextPage = ({ data, success }: any) => {
       },
     });
   };
-  const handleItemChange = (
-    e: { target: { name: any; value: any } },
-    index: number,
-    inpName: string
-  ) => {
+
+  //   handleChange(i, event) {
+//     let values = [...this.state.values];
+//     values[i] = event.target.value;
+//     this.setState({ values });
+//  }
+
+  const handleItemChange = (e: any, index: number, inpName: string) => {
     const { name, value } = e.target;
     // setItemList({ ...itemList, [name]: value });
     const list = [...itemList];
     list[index][name] = value;
     setItemList(list);
-    switch (name) {
+    switch (inpName) {
       case "description":
         if (value.length < 3) {
           handleSetItemErrors("description", true, "*description required");
@@ -617,7 +626,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                         type="text"
                         placeholder="Enter Student ID"
                         name="student_id"
-                        defaultValue={values.student_id}
+                        value={values.student_id}
                         readOnly
                         id="student_id"
                         className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
@@ -658,7 +667,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                         type="text"
                         placeholder="Enter Student ID"
                         name="learncab_id"
-                        defaultValue={values.learncab_id}
+                        value={values.learncab_id}
                         readOnly
                         id="learncab_id"
                         className="block bg-gray-200 border-[1px] px-7 md:px-2 py-[2px] mb-1 rounded outline-none border-gray-400 placeholder:text-sm placeholder:font-[400] focus:border-blue-900 focus:outline-none focus:drop-shadow-xl"
