@@ -207,10 +207,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
     }
   }
 
-  const isActive= errorIncludes.some((item) => item === true)
-
-
-  
+  const isActive = errorIncludes.some((item) => item === true);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>): void {
     e.preventDefault();
@@ -870,7 +867,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
               <div className="border-[1px] w-full mt-4 bg-gray-200  border-gray-200 inline-block mb-1 drop-shadow-xl"></div>
               <div className="flex flex-row">
                 <button
-                disabled={!isActive}
+                  disabled={!isActive}
                   type="submit"
                   // onClick={(e) => {
                   //   Array.from(document.querySelectorAll("input")).forEach(
@@ -879,7 +876,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                   //   setValues([{}]);
                   //   setItemList([{}]);
                   // }}
-                  className="m-4 w-20 py-1 text-center text-white rounded  bg-darkViolet hover:bg-blue-800 hover:text-white"
+                  className="m-4 w-20 py-1 text-center text-white rounded  bg-darkViolet  "
                 >
                   Submit
                 </button>
