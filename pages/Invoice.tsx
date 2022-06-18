@@ -154,26 +154,32 @@ const Invoice: NextPage = ({ data, success }: any) => {
     description: {
       error: false,
       message: "",
+      index: [],
     },
     price: {
       error: false,
       message: "",
+      index: [],
     },
     amount_paid: {
       error: false,
       message: "",
+      index: [],
     },
     plan_code: {
       error: false,
       message: "",
+      index: [],
     },
     days: {
       error: false,
       message: "",
+      index: [],
     },
     discount: {
       error: false,
       message: "",
+      index: [],
     },
   });
   // const [isSubmit, setIsSubmit] = useState(false);
@@ -203,8 +209,8 @@ const Invoice: NextPage = ({ data, success }: any) => {
   const itemsDetails: any = useSelector((state: any) => state.detail.itemList);
 
   /**
-   *  
-   * */ 
+   *
+   * */
   let errorIncludes: any = [];
 
   for (let key in error) {
@@ -227,7 +233,6 @@ const Invoice: NextPage = ({ data, success }: any) => {
   useEffect(() => {
     return () => {
       const isActive = errorIncludes.some((item: boolean) => item === true);
-      console.log(isActive);
       setActive(isActive);
       // console.log(!isActive);
     };
@@ -274,11 +279,10 @@ const Invoice: NextPage = ({ data, success }: any) => {
         // console.log(response.data.fileurl);
         let urldata = response.data.fileurl;
 
-        // Array.from(document.querySelectorAll("input")).forEach(
-        //   (input) => (input.value = "")
-        // );
-        // setValues([{}]);
-        // setItemList([{}]);
+        Array.from(document.querySelectorAll("input")).forEach(
+          (input) => (input.value = "")
+        );
+
         setPdf(urldata);
       })
       .catch((response) => {
@@ -300,8 +304,6 @@ const Invoice: NextPage = ({ data, success }: any) => {
       },
     });
   };
-
-
 
   const handleChange = (inputValue: any, name: string) => {
     setValues({ ...values, [inputValue.target.name]: inputValue.target.value });
@@ -427,73 +429,124 @@ const Invoice: NextPage = ({ data, success }: any) => {
       // do nothing
     }
   };
+
   const handleSetItemErrors = (
     name: string,
     isValid: boolean,
-    errorMessage: string
+    errorMessage: string,
+    indexNumber: number
   ) => {
-    setItemListError({
-      ...itemListError,
-      [name]: {
-        error: isValid,
-        message: errorMessage,
-      },
-    });
+    let indexArrayValues;
+    for (let key in itemListError) {
+      let obj = itemListError[key]
+      for (let prop in obj) {   
+        if (prop === "index") {
+          indexArrayValues = obj[prop]
+        }
+      }
+    }
+
+
+    if (!isValid) {
+      if (indexArrayValues.includes(indexNumber)) {
+        indexArrayValues = indexArrayValues.filter(
+          (item) => item != indexNumber
+        );
+      }
+      setItemListError({
+        ...itemListError,
+        [name]: {
+          errror: false,
+          message: errorMessage,
+          index: indexArrayValues,
+        },
+      });
+    } else {
+      if (!indexArrayValues.includes(indexNumber)) {
+        indexArrayValues.push(indexNumber);
+      }
+      setItemListError({
+        ...itemListError,
+        [name]: {
+          errror: true,
+          message: errorMessage,
+          index: indexArrayValues,
+        },
+      });
+    }
   };
 
   //   handleChange(i, event) {
-//     let values = [...this.state.values];
-//     values[i] = event.target.value;
-//     this.setState({ values });
-//  }
+  //     let values = [...this.state.values];
+  //     values[i] = event.target.value;
+  //     this.setState({ values });
+  //  }
 
-  const handleItemChange = (e: any, index: number, inpName: string) => {
+  const handleItemChange = (
+    e: { target: { name: any; value: any } },
+    index: number,
+    inpName: string
+  ) => {
     const { name, value } = e.target;
-    // setItemList({ ...itemList, [name]: value });
-    const list = [...itemList];
-    list[index][name] = value;
-    setItemList(list);
+    const updatedItems = itemList.map((item, i) => {
+      if (index === i) {
+        return { ...item, [name]: value };
+      } else {
+        return item;
+      }
+    });
+    setItemList(updatedItems);
     switch (inpName) {
       case "description":
         if (value.length < 3) {
-          handleSetItemErrors("description", true, "*description required");
+          handleSetItemErrors(
+            "description",
+            true,
+            "*description required",
+            index
+          );
         } else {
-          handleSetItemErrors("description", false, "");
+          handleSetItemErrors("description", false, "", index);
         }
         break;
       case "price":
         if (value.length < 2) {
-          handleSetItemErrors("price", true, "*price required");
+          handleSetItemErrors("price", true, "*price required", index);
         } else {
-          handleSetItemErrors("price", false, "");
+          handleSetItemErrors("price", false, "", index);
         }
         break;
       case "amount_paid":
         if (value.length < 2) {
-          handleSetItemErrors("amount_paid", true, "*amount Paid required");
+          handleSetItemErrors(
+            "amount_paid",
+            true,
+            "*amount Paid required",
+            index
+          );
         } else {
-          handleSetItemErrors("amount_paid", false, "");
+          handleSetItemErrors("amount_paid", false, "", index);
         }
         break;
       case "plan_code":
         if (value.length < 2) {
-          handleSetItemErrors("plan_code", true, "*plan code required");
+          handleSetItemErrors("plan_code", true, "*plan code required", index);
         } else {
-          handleSetItemErrors("plan_code", false, "");
+          handleSetItemErrors("plan_code", false, "", index);
         }
         break;
       case "days":
         if (value.length < 2) {
-          handleSetItemErrors("days", true, "*days required");
+          handleSetItemErrors("days", true, "*days required", index);
         } else {
-          handleSetItemErrors("days", false, "");
+          handleSetItemErrors("days", false, "", index);
         }
         break;
       case "discount":
         if (value.length < 2) {
-          handleSetItemErrors("discount", true, "*discount required");
+          handleSetItemErrors("discount", true, "*discount required", index);
         } else {
-          handleSetItemErrors("discount", false, "");
+          handleSetItemErrors("discount", false, "", index);
         }
         break;
       default:
@@ -580,7 +633,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="name"
                     id="name"
                     title="Name / Business Name"
-                    value={values.name || ""}
+                    // value={values.name || ""}
                     onChange={(value: any) => handleChange(value, "name")}
                     placeholder="Enter Name"
                     error={error.name}
@@ -593,7 +646,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="email"
                     id="email"
                     title="Email"
-                    value={values.email || ""}
+                    // value={values.email || ""}
                     onChange={(value: any) => handleChange(value, "email")}
                     placeholder="Enter Email"
                     error={error.email}
@@ -605,7 +658,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="phone"
                     id="phone"
                     title="Phone No"
-                    value={values.phone || ""}
+                    // value={values.phone || ""}
                     onChange={(value: any) => handleChange(value, "phone")}
                     placeholder="Enter Phone No"
                     error={error.phone}
@@ -699,7 +752,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="address"
                     id="address"
                     title="Address"
-                    value={values.address || ""}
+                    // value={values.address || ""}
                     onChange={(value: any) => handleChange(value, "address")}
                     placeholder="Enter Address"
                     error={error.address}
@@ -711,7 +764,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="city"
                     id="city"
                     title="City"
-                    value={values.city || ""}
+                    // value={values.city || ""}
                     onChange={(value: any) => handleChange(value, "city")}
                     placeholder="Enter City"
                     error={error.city}
@@ -723,7 +776,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="state"
                     id="state"
                     title="State"
-                    value={values.state || ""}
+                    // value={values.state || ""}
                     onChange={(value: any) => handleChange(value, "state")}
                     placeholder="Enter State"
                     error={error.state}
@@ -735,7 +788,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="pincode"
                     id="pincode"
                     title="Pincode"
-                    value={values.pincode || ""}
+                    // value={values.pincode || ""}
                     onChange={(value: any) => handleChange(value, "pincode")}
                     placeholder="Enter Pincode"
                     error={error.pincode}
@@ -747,7 +800,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="country"
                     id="country"
                     title="Country"
-                    value={values.country || ""}
+                    // value={values.country || ""}
                     onChange={(value: any) => handleChange(value, "country")}
                     placeholder="Enter Country"
                     error={error.country}
@@ -759,7 +812,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="gst_number"
                     id="gst_number"
                     title="GST Number"
-                    value={values.gst_number || ""}
+                    // value={values.gst_number || ""}
                     onChange={(value: any) => handleChange(value, "gst_number")}
                     placeholder="Enter GST Number"
                     error={error.gst_number}
@@ -771,7 +824,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="payment_id"
                     id="payment_id"
                     title="Payment ID"
-                    value={values.payment_id || ""}
+                    // value={values.payment_id || ""}
                     onChange={(value: any) => handleChange(value, "payment_id")}
                     placeholder="Enter Payment ID"
                     error={error.payment_id}
@@ -783,7 +836,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="date"
                     id="date"
                     title="Date"
-                    value={values.date || ""}
+                    // value={values.date || ""}
                     onChange={(value: any) => handleChange(value, "date")}
                     placeholder="Enter Date"
                     error={error.date}
@@ -816,11 +869,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="description"
                               title="Description"
                               placeholder="Enter Description"
-                              value={itemList[0].description || ""}
+                              // value={itemList[0].description || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "description")
                               }
                               error={itemListError.description}
+                              index = {i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -833,8 +887,9 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "price")
                               }
-                              value={itemList[0].price || ""}
+                              // value={itemList[0].price || ""}
                               error={itemListError.price}
+                              index = {i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -844,11 +899,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="amount_paid"
                               title="Amount Paid"
                               placeholder="Enter Amount Paid"
-                              value={itemList[0].amount_paid || ""}
+                              // value={itemList[0].amount_paid || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "amount_paid")
                               }
                               error={itemListError.amount_paid}
+                              index = {i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -858,11 +914,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="plan_code"
                               title="Plan Code"
                               placeholder="Enter Plan Code"
-                              value={itemList[0].plan_code || ""}
+                              // value={itemList[0].plan_code || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "plan_code")
                               }
                               error={itemListError.plan_code}
+                              index = {i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -872,11 +929,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="days"
                               title="Days"
                               placeholder="Enter Days"
-                              value={itemList[0].days || ""}
+                              // value={itemList[0].days || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "days")
                               }
                               error={itemListError.days}
+                              index = {i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -886,11 +944,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="discount"
                               title="Discount"
                               placeholder="Enter Discount"
-                              value={itemList[0].discount || ""}
+                              // value={itemList[0].discount || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "discount")
                               }
                               error={itemListError.discount}
+                              index = {i}
                             />
                           </div>
                         </div>
@@ -963,7 +1022,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
             <object
               data={pdf}
               type="application/pdf"
-              className="w-[370px] h-[600px] md:w-[650px] md:h-[800px] lg:w-[510px] lg:h-[600px]"
+              className="w-[370px] h-[600px] md:w-[650px] md:h-[800px] lg:w-[440px] lg:h-[650px]"
             >
               <p className="text-center">
                 Alternative text - include a link{" "}
