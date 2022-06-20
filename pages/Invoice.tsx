@@ -150,6 +150,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
       message: "",
     },
   });
+  console.log(error);
   const [itemListError, setItemListError] = useState({
     description: {
       error: false,
@@ -182,7 +183,6 @@ const Invoice: NextPage = ({ data, success }: any) => {
       index: [],
     },
   });
-  // const [isSubmit, setIsSubmit] = useState(false);
   let [pdf, setPdf] = useState();
 
   const dispatch = useDispatch();
@@ -214,25 +214,34 @@ const Invoice: NextPage = ({ data, success }: any) => {
   let errorIncludes: any = [];
 
   for (let key in error) {
-    let obj = error[key];
+    // {console.log(key)}
+    let obj = error[key]; 
+    // console.log(obj);
     for (let prop in obj) {
+      // console.log(prop);
       if (prop === "error") {
         errorIncludes.push(obj[prop]);
+        // console.log(errorIncludes);
+        console.log(obj[prop]);
+        // console.log(errorIncludes);
       }
     }
   }
 
-  for (let key in itemListError) {
-    let obj: any = itemListError[key];
-    for (let prop in obj) {
-      if (prop === "error") {
-        errorIncludes.push(obj[prop]);
-      }
-    }
-  }
+  // for (let key in itemListError) {
+  //   let obj: any = itemListError[key];
+  //   for (let prop in obj) {
+  //     if (prop === "error") {
+  //       errorIncludes.push(obj[prop]);
+  //     }
+  //   }
+  // }
   useEffect(() => {
     return () => {
-      const isActive = errorIncludes.some((item: boolean) => item === true);
+      const isActive = errorIncludes.some((item: boolean) => {
+        console.log(item);
+        item === true});
+      console.log(isActive);
       setActive(isActive);
       // console.log(!isActive);
     };
@@ -279,9 +288,9 @@ const Invoice: NextPage = ({ data, success }: any) => {
         // console.log(response.data.fileurl);
         let urldata = response.data.fileurl;
 
-        Array.from(document.querySelectorAll("input")).forEach(
-          (input) => (input.value = "")
-        );
+        // Array.from(document.querySelectorAll("input")).forEach(
+        //   (input) => (input.value = "")
+        // );
 
         setPdf(urldata);
       })
@@ -430,51 +439,50 @@ const Invoice: NextPage = ({ data, success }: any) => {
     }
   };
 
-  const handleSetItemErrors = (
-    name: string,
-    isValid: boolean,
-    errorMessage: string,
-    indexNumber: number
-  ) => {
-    let indexArrayValues;
-    for (let key in itemListError) {
-      let obj = itemListError[key]
-      for (let prop in obj) {   
-        if (prop === "index") {
-          indexArrayValues = obj[prop]
-        }
-      }
-    }
+  // const handleSetItemErrors = (
+  //   name: string,
+  //   isValid: boolean,
+  //   errorMessage: string,
+  //   indexNumber: number
+  // ) => {
+  //   let indexArrayValues;
+  //   for (let key in itemListError) {
+  //     let obj = itemListError[key]
+  //     for (let prop in obj) {
+  //       if (prop === "index") {
+  //         indexArrayValues = obj[prop]
+  //       }
+  //     }
+  //   }
 
-
-    if (!isValid) {
-      if (indexArrayValues.includes(indexNumber)) {
-        indexArrayValues = indexArrayValues.filter(
-          (item) => item != indexNumber
-        );
-      }
-      setItemListError({
-        ...itemListError,
-        [name]: {
-          errror: false,
-          message: errorMessage,
-          index: indexArrayValues,
-        },
-      });
-    } else {
-      if (!indexArrayValues.includes(indexNumber)) {
-        indexArrayValues.push(indexNumber);
-      }
-      setItemListError({
-        ...itemListError,
-        [name]: {
-          errror: true,
-          message: errorMessage,
-          index: indexArrayValues,
-        },
-      });
-    }
-  };
+  //   if (!isValid) {
+  //     if (indexArrayValues.includes(indexNumber)) {
+  //       indexArrayValues = indexArrayValues.filter(
+  //         (item: number) => item != indexNumber
+  //       );
+  //     }
+  //     setItemListError({
+  //       ...itemListError,
+  //       [name]: {
+  //         errror: false,
+  //         message: errorMessage,
+  //         index: indexArrayValues,
+  //       },
+  //     });
+  //   } else {
+  //     if (!indexArrayValues.includes(indexNumber)) {
+  //       indexArrayValues.push(indexNumber);
+  //     }
+  //     setItemListError({
+  //       ...itemListError,
+  //       [name]: {
+  //         errror: true,
+  //         message: errorMessage,
+  //         index: indexArrayValues,
+  //       },
+  //     });
+  //   }
+  // };
 
   //   handleChange(i, event) {
   //     let values = [...this.state.values];
@@ -496,62 +504,62 @@ const Invoice: NextPage = ({ data, success }: any) => {
       }
     });
     setItemList(updatedItems);
-    switch (inpName) {
-      case "description":
-        if (value.length < 3) {
-          handleSetItemErrors(
-            "description",
-            true,
-            "*description required",
-            index
-          );
-        } else {
-          handleSetItemErrors("description", false, "", index);
-        }
-        break;
-      case "price":
-        if (value.length < 2) {
-          handleSetItemErrors("price", true, "*price required", index);
-        } else {
-          handleSetItemErrors("price", false, "", index);
-        }
-        break;
-      case "amount_paid":
-        if (value.length < 2) {
-          handleSetItemErrors(
-            "amount_paid",
-            true,
-            "*amount Paid required",
-            index
-          );
-        } else {
-          handleSetItemErrors("amount_paid", false, "", index);
-        }
-        break;
-      case "plan_code":
-        if (value.length < 2) {
-          handleSetItemErrors("plan_code", true, "*plan code required", index);
-        } else {
-          handleSetItemErrors("plan_code", false, "", index);
-        }
-        break;
-      case "days":
-        if (value.length < 2) {
-          handleSetItemErrors("days", true, "*days required", index);
-        } else {
-          handleSetItemErrors("days", false, "", index);
-        }
-        break;
-      case "discount":
-        if (value.length < 2) {
-          handleSetItemErrors("discount", true, "*discount required", index);
-        } else {
-          handleSetItemErrors("discount", false, "", index);
-        }
-        break;
-      default:
-      //do nothing
-    }
+    // switch (inpName) {
+    //   case "description":
+    //     if (value.length < 3) {
+    //       handleSetItemErrors(
+    //         "description",
+    //         true,
+    //         "*description required",
+    //         index
+    //       );
+    //     } else {
+    //       handleSetItemErrors("description", false, "", index);
+    //     }
+    //     break;
+    //   case "price":
+    //     if (value.length < 2) {
+    //       handleSetItemErrors("price", true, "*price required", index);
+    //     } else {
+    //       handleSetItemErrors("price", false, "", index);
+    //     }
+    //     break;
+    //   case "amount_paid":
+    //     if (value.length < 2) {
+    //       handleSetItemErrors(
+    //         "amount_paid",
+    //         true,
+    //         "*amount Paid required",
+    //         index
+    //       );
+    //     } else {
+    //       handleSetItemErrors("amount_paid", false, "", index);
+    //     }
+    //     break;
+    //   case "plan_code":
+    //     if (value.length < 2) {
+    //       handleSetItemErrors("plan_code", true, "*plan code required", index);
+    //     } else {
+    //       handleSetItemErrors("plan_code", false, "", index);
+    //     }
+    //     break;
+    //   case "days":
+    //     if (value.length < 2) {
+    //       handleSetItemErrors("days", true, "*days required", index);
+    //     } else {
+    //       handleSetItemErrors("days", false, "", index);
+    //     }
+    //     break;
+    //   case "discount":
+    //     if (value.length < 2) {
+    //       handleSetItemErrors("discount", true, "*discount required", index);
+    //     } else {
+    //       handleSetItemErrors("discount", false, "", index);
+    //     }
+    //     break;
+    //   default:
+    //   //do nothing
+    // }
   };
   const handleaddclick = () => {
     setItemList([
@@ -633,7 +641,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="name"
                     id="name"
                     title="Name / Business Name"
-                    // value={values.name || ""}
+                    value={values.name || ""}
                     onChange={(value: any) => handleChange(value, "name")}
                     placeholder="Enter Name"
                     error={error.name}
@@ -646,7 +654,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="email"
                     id="email"
                     title="Email"
-                    // value={values.email || ""}
+                    value={values.email || ""}
                     onChange={(value: any) => handleChange(value, "email")}
                     placeholder="Enter Email"
                     error={error.email}
@@ -658,7 +666,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="phone"
                     id="phone"
                     title="Phone No"
-                    // value={values.phone || ""}
+                    value={values.phone || ""}
                     onChange={(value: any) => handleChange(value, "phone")}
                     placeholder="Enter Phone No"
                     error={error.phone}
@@ -752,7 +760,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="address"
                     id="address"
                     title="Address"
-                    // value={values.address || ""}
+                    value={values.address || ""}
                     onChange={(value: any) => handleChange(value, "address")}
                     placeholder="Enter Address"
                     error={error.address}
@@ -764,7 +772,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="city"
                     id="city"
                     title="City"
-                    // value={values.city || ""}
+                    value={values.city || ""}
                     onChange={(value: any) => handleChange(value, "city")}
                     placeholder="Enter City"
                     error={error.city}
@@ -776,7 +784,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="state"
                     id="state"
                     title="State"
-                    // value={values.state || ""}
+                    value={values.state || ""}
                     onChange={(value: any) => handleChange(value, "state")}
                     placeholder="Enter State"
                     error={error.state}
@@ -788,7 +796,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="pincode"
                     id="pincode"
                     title="Pincode"
-                    // value={values.pincode || ""}
+                    value={values.pincode || ""}
                     onChange={(value: any) => handleChange(value, "pincode")}
                     placeholder="Enter Pincode"
                     error={error.pincode}
@@ -800,7 +808,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="country"
                     id="country"
                     title="Country"
-                    // value={values.country || ""}
+                    value={values.country || ""}
                     onChange={(value: any) => handleChange(value, "country")}
                     placeholder="Enter Country"
                     error={error.country}
@@ -812,7 +820,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="gst_number"
                     id="gst_number"
                     title="GST Number"
-                    // value={values.gst_number || ""}
+                    value={values.gst_number || ""}
                     onChange={(value: any) => handleChange(value, "gst_number")}
                     placeholder="Enter GST Number"
                     error={error.gst_number}
@@ -824,7 +832,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="payment_id"
                     id="payment_id"
                     title="Payment ID"
-                    // value={values.payment_id || ""}
+                    value={values.payment_id || ""}
                     onChange={(value: any) => handleChange(value, "payment_id")}
                     placeholder="Enter Payment ID"
                     error={error.payment_id}
@@ -836,7 +844,7 @@ const Invoice: NextPage = ({ data, success }: any) => {
                     name="date"
                     id="date"
                     title="Date"
-                    // value={values.date || ""}
+                    value={values.date || ""}
                     onChange={(value: any) => handleChange(value, "date")}
                     placeholder="Enter Date"
                     error={error.date}
@@ -869,12 +877,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="description"
                               title="Description"
                               placeholder="Enter Description"
-                              // value={itemList[0].description || ""}
+                              value={itemList[i].description || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "description")
                               }
                               error={itemListError.description}
-                              index = {i}
+                              index={i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -887,9 +895,9 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "price")
                               }
-                              // value={itemList[0].price || ""}
+                              value={itemList[i].price || ""}
                               error={itemListError.price}
-                              index = {i}
+                              index={i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -899,12 +907,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="amount_paid"
                               title="Amount Paid"
                               placeholder="Enter Amount Paid"
-                              // value={itemList[0].amount_paid || ""}
+                              value={itemList[i].amount_paid || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "amount_paid")
                               }
                               error={itemListError.amount_paid}
-                              index = {i}
+                              index={i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -914,12 +922,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="plan_code"
                               title="Plan Code"
                               placeholder="Enter Plan Code"
-                              // value={itemList[0].plan_code || ""}
+                              value={itemList[i].plan_code || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "plan_code")
                               }
                               error={itemListError.plan_code}
-                              index = {i}
+                              index={i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -929,12 +937,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="days"
                               title="Days"
                               placeholder="Enter Days"
-                              // value={itemList[0].days || ""}
+                              value={itemList[i].days || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "days")
                               }
                               error={itemListError.days}
-                              index = {i}
+                              index={i}
                             />
                           </div>
                           <div className="md:mr-10">
@@ -944,12 +952,12 @@ const Invoice: NextPage = ({ data, success }: any) => {
                               id="discount"
                               title="Discount"
                               placeholder="Enter Discount"
-                              // value={itemList[0].discount || ""}
+                              value={itemList[i].discount || ""}
                               onChange={(value: any) =>
                                 handleItemChange(value, i, "discount")
                               }
                               error={itemListError.discount}
-                              index = {i}
+                              index={i}
                             />
                           </div>
                         </div>
